@@ -1,1 +1,1 @@
-# cse221
+# UCSD CSE 221 Project
