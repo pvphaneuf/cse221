@@ -1,18 +1,10 @@
-#define _GNU_SOURCE
-#include <sched.h>
-
-#include <stdio.h>
-#include <time.h>
+#include "common.h"
 
 #include <cpufreq.h>
 
 
 // If I change this, change get_median
 unsigned int const TEST_COUNT = 100;
-
-unsigned int const NANO_SECONDS_IN_SEC = 1000000000L;
-
-unsigned int const CPU_INDEX = 3;
 
 
 int init_test()
@@ -99,7 +91,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -115,7 +107,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -131,7 +123,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -147,7 +139,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -163,7 +155,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -179,7 +171,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
@@ -195,7 +187,7 @@ int measure_clocks(void)
 			return -1;
 		}
 		
-		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
 		result_array[result_array_idx] = diff;
 	}
