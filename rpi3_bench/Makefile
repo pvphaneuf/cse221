@@ -6,7 +6,7 @@ all: $(EXES)
 
 .PHONY: clean
 clean:
-	-rm *.out
+	-rm *.out *.o
 
 measurement_overhead: measurement_overhead.o
 	gcc -o measurement_overhead.out measurement_overhead.o -lrt -lcpufreq $(CFLAGS)
