@@ -7,7 +7,8 @@
 #include <cpufreq.h>
 
 
-unsigned int const LOOP_LIMIT = 10000;
+// If I change this, change get_median
+unsigned int const TEST_COUNT = 100;
 
 unsigned int const NANO_SECONDS_IN_SEC = 1000000000L;
 
@@ -50,16 +51,47 @@ int init_test()
 }
 
 
+int compare_function(const void * a, const void * b)
+{
+   return ( *(int*)a - *(int*)b );
+}
+
+
+void print_results(float result_array[])
+{
+	unsigned int n = 0;
+	for( n = 0 ; n < TEST_COUNT; n++ ) 
+	{
+		printf("%f ", result_array[n]);
+	}
+	printf("\n");
+}
+
+
+// Will sort array before finding median.
+float get_median(float result_array[], int array_size)
+{
+	qsort(result_array, TEST_COUNT, sizeof(int), compare_function);
+	
+	// Currently assuming array_size will always be even
+	float result_1 = result_array[array_size / 2];
+	float result_2 = result_array[(array_size / 2) + 1];
+	
+	float median = (result_1 + result_2) / 2;
+	
+	return median;
+}
+
 int measure_clocks(void)
 {	
 	struct timespec start, stop;
 	
 	unsigned int diff = 0;
-	unsigned int sum = 0;
-	float avg = 0;
+	unsigned int result_array_idx = 0;
 	
-	unsigned int count;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	float result_array[TEST_COUNT];
+
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
 		if ((clock_gettime(CLOCK_REALTIME, &start) != 0) || (clock_gettime(CLOCK_REALTIME, &stop) != 0))
 		{
@@ -69,17 +101,13 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
-		
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_REALTIME: %f ns\n", avg);
+		
+	printf("CLOCK_REALTIME: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
 		if ((clock_gettime(CLOCK_REALTIME_COARSE, &start) != 0) || (clock_gettime(CLOCK_REALTIME_COARSE, &stop) != 0))
 		{
@@ -89,16 +117,13 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_REALTIME_COARSE: %f ns\n", avg);
+		
+	printf("CLOCK_REALTIME_COARSE: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
 		if ((clock_gettime(CLOCK_MONOTONIC, &start) != 0) || (clock_gettime(CLOCK_MONOTONIC, &stop) != 0))
 		{
@@ -108,18 +133,15 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_MONOTONIC: %f ns\n", avg);
+		
+	printf("CLOCK_MONOTONIC: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
-		if ((clock_gettime(CLOCK_MONOTONIC_RAW , &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_RAW, &stop) != 0))
+		if ((clock_gettime(CLOCK_MONOTONIC_RAW, &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_RAW, &stop) != 0))
 		{
 			printf("CLOCK_MONOTONIC_RAW clock_gettime");
 			return -1;
@@ -127,18 +149,15 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_MONOTONIC_RAW: %f ns\n", avg);
+		
+	printf("CLOCK_MONOTONIC_RAW: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
-		if ((clock_gettime(CLOCK_MONOTONIC_COARSE  , &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_COARSE, &stop) != 0))
+		if ((clock_gettime(CLOCK_MONOTONIC_COARSE, &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_COARSE, &stop) != 0))
 		{
 			printf("CLOCK_MONOTONIC_COARSE clock_gettime");
 			return -1;
@@ -146,18 +165,15 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_MONOTONIC_COARSE: %f ns\n", avg);
+		
+	printf("CLOCK_MONOTONIC_COARSE: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
-		if ((clock_gettime(CLOCK_PROCESS_CPUTIME_ID  , &start) != 0) || (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop) != 0))
+		if ((clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start) != 0) || (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop) != 0))
 		{
 			printf("CLOCK_PROCESS_CPUTIME_ID clock_gettime");
 			return -1;
@@ -165,18 +181,15 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_PROCESS_CPUTIME_ID: %f ns\n", avg);
+		
+	printf("CLOCK_PROCESS_CPUTIME_ID: %f ns\n", get_median(result_array, TEST_COUNT));
 	
 	
-	diff = 0;
-	sum = 0;
-	avg = 0;
-	for(count = 0; count < LOOP_LIMIT; count++)
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
 	{
-		if ((clock_gettime(CLOCK_THREAD_CPUTIME_ID  , &start) != 0) || (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &stop) != 0))
+		if ((clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start) != 0) || (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &stop) != 0))
 		{
 			printf("CLOCK_THREAD_CPUTIME_ID clock_gettime");
 			return -1;
@@ -184,12 +197,11 @@ int measure_clocks(void)
 		
 		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 		
-		sum = sum + diff;
+		result_array[result_array_idx] = diff;
 	}
-	avg = (float)sum / (float)LOOP_LIMIT;
-	printf("CLOCK_THREAD_CPUTIME_ID: %f ns\n", avg);
-	
 		
+	printf("CLOCK_THREAD_CPUTIME_ID: %f ns\n", get_median(result_array, TEST_COUNT));
+	
 	return 0;
 }
 
