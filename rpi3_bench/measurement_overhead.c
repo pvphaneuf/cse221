@@ -1,21 +1,111 @@
-#include<stdio.h>
-#include <stdint.h>/* for uint64 definition */
-#include <stdlib.h>/* for exit() definition */
-#include <time.h>/* for clock_gettime */
+#include <stdio.h>
+#include <time.h>
 
-#define BILLION 1000000000L
 
-main()
+unsigned int const LOOP_LIMIT = 10000;
+
+unsigned int const NANO_SECONDS_IN_SEC = 1000000000L;
+
+
+int main(void)
 {
-  uint64_t diff;
-  struct timespec start, end;
-  int i;
-
-  /* measure monotonic time */
-  clock_gettime(CLOCK_MONOTONIC_RAW, &start);/* mark start time */
-  //sleep(1);/* do stuff */
-  clock_gettime(CLOCK_MONOTONIC_RAW, &end);/* mark the end time */
-
-  diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-  printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diff);
+	struct timespec start, stop;
+	
+	unsigned int diff = 0;
+	unsigned int sum = 0;
+	float avg = 0;
+	
+	unsigned int count;
+	for(count = 0; count < LOOP_LIMIT; count++)
+	{
+		if ((clock_gettime(CLOCK_REALTIME, &start) != 0) || (clock_gettime(CLOCK_REALTIME, &stop) != 0))
+		{
+			perror("CLOCK_REALTIME clock_gettime");
+			return -1;
+		}
+		
+		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		sum = sum + diff;
+	}
+	avg = (float)sum / (float)LOOP_LIMIT;
+	printf("CLOCK_REALTIME: %f ns\n", avg);
+	
+	
+	diff = 0;
+	sum = 0;
+	avg = 0;
+	for(count = 0; count < LOOP_LIMIT; count++)
+	{
+		if ((clock_gettime(CLOCK_REALTIME_COARSE, &start) != 0) || (clock_gettime(CLOCK_REALTIME_COARSE, &stop) != 0))
+		{
+			perror("CLOCK_REALTIME_COARSE clock_gettime");
+			return -1;
+		}
+		
+		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		sum = sum + diff;
+	}
+	avg = (float)sum / (float)LOOP_LIMIT;
+	printf("CLOCK_REALTIME_COARSE: %f ns\n", avg);
+	
+	
+	diff = 0;
+	sum = 0;
+	avg = 0;
+	for(count = 0; count < LOOP_LIMIT; count++)
+	{
+		if ((clock_gettime(CLOCK_MONOTONIC, &start) != 0) || (clock_gettime(CLOCK_MONOTONIC, &stop) != 0))
+		{
+			perror("CLOCK_MONOTONIC clock_gettime");
+			return -1;
+		}
+		
+		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		sum = sum + diff;
+	}
+	avg = (float)sum / (float)LOOP_LIMIT;
+	printf("CLOCK_MONOTONIC: %f ns\n", avg);
+	
+	
+	diff = 0;
+	sum = 0;
+	avg = 0;
+	for(count = 0; count < LOOP_LIMIT; count++)
+	{
+		if ((clock_gettime(CLOCK_MONOTONIC_RAW , &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_RAW , &stop) != 0))
+		{
+			perror("CLOCK_MONOTONIC_RAW  clock_gettime");
+			return -1;
+		}
+		
+		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		sum = sum + diff;
+	}
+	avg = (float)sum / (float)LOOP_LIMIT;
+	printf("CLOCK_MONOTONIC_RAW: %f ns\n", avg);
+	
+	
+	diff = 0;
+	sum = 0;
+	avg = 0;
+	for(count = 0; count < LOOP_LIMIT; count++)
+	{
+		if ((clock_gettime(CLOCK_MONOTONIC_COARSE  , &start) != 0) || (clock_gettime(CLOCK_MONOTONIC_COARSE  , &stop) != 0))
+		{
+			perror("CLOCK_MONOTONIC_COARSE   clock_gettime");
+			return -1;
+		}
+		
+		diff = NANO_SECONDS_IN_SEC * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		sum = sum + diff;
+	}
+	avg = (float)sum / (float)LOOP_LIMIT;
+	printf("CLOCK_MONOTONIC_COARSE: %f ns\n", avg);
+		
+	return 0;
 }
