@@ -1,6 +1,6 @@
 CODEGEN=-mcpu=cortex-a53 -mfpu=neon -mfloat-abi=hard -mapcs-frame
 CFLAGS=-O0 -std=gnu11 $(CODEGEN)
-EXES=measurement_overhead hpet_clock_resolutions
+EXES=measurement_overhead hpet_clock_resolutions procedure_call
 
 all: $(EXES)
 
@@ -13,6 +13,9 @@ measurement_overhead: measurement_overhead.o
 
 hpet_clock_resolutions: hpet_clock_resolutions.o
 	gcc -o hpet_clock_resolutions.out hpet_clock_resolutions.o $(CFLAGS)
+
+procedure_call: procedure_call.o
+	gcc -o procedure_call.out procedure_call.o $(CFLAGS)
 
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
