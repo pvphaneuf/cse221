@@ -1,6 +1,6 @@
 #include "common.h"
 
-main()
+void main(void)
 {
   uint64_t ns;
   
