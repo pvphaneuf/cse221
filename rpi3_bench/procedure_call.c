@@ -79,12 +79,19 @@ int main() {
     CPU_SET(3, &cpu_set);
     sched_setaffinity(0, sizeof(cpu_set), &cpu_set);
 
-    printf("0 args: %f\n", get_avg_measure(start, end, measures, 0));
-    printf("1 args: %f\n", get_avg_measure(start, end, measures, 1));
-    printf("2 args: %f\n", get_avg_measure(start, end, measures, 2));
-    printf("3 args: %f\n", get_avg_measure(start, end, measures, 3));
-    printf("4 args: %f\n", get_avg_measure(start, end, measures, 4));
-    printf("5 args: %f\n", get_avg_measure(start, end, measures, 5));
-    printf("6 args: %f\n", get_avg_measure(start, end, measures, 6));
-    printf("7 args: %f\n", get_avg_measure(start, end, measures, 7));
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    for (int i = 0; i < ITERATIONS; ++i) {
+    }
+    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+    double baseline = timespec_to_nsecs(start, end) / ITERATIONS;
+    printf("baseline loop: %f\n", baseline);
+
+    printf("0 args: %f\n", get_avg_measure(start, end, measures, 0)-baseline);
+    printf("1 args: %f\n", get_avg_measure(start, end, measures, 1)-baseline);
+    printf("2 args: %f\n", get_avg_measure(start, end, measures, 2)-baseline);
+    printf("3 args: %f\n", get_avg_measure(start, end, measures, 3)-baseline);
+    printf("4 args: %f\n", get_avg_measure(start, end, measures, 4)-baseline);
+    printf("5 args: %f\n", get_avg_measure(start, end, measures, 5)-baseline);
+    printf("6 args: %f\n", get_avg_measure(start, end, measures, 6)-baseline);
+    printf("7 args: %f\n", get_avg_measure(start, end, measures, 7)-baseline);
 }
