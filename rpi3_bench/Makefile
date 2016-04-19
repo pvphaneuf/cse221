@@ -16,6 +16,9 @@ hpet_clock_resolutions: hpet_clock_resolutions.o
 
 procedure_call: procedure_call.o
 	gcc -o procedure_call.out procedure_call.o $(CFLAGS)
+	
+system_call_overhead: system_call_overhead.o
+	gcc -o system_call_overhead.out system_call_overhead.o -lrt -lcpufreq $(CFLAGS)
 
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
