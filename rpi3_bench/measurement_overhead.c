@@ -198,6 +198,36 @@ int measure_clocks(void)
 }
 
 
+int measure_for_loop(void)
+{
+	struct timespec start, stop;
+	
+	unsigned int diff = 0;
+	unsigned int result_array_idx = 0;
+	
+	float result_array[TEST_COUNT];
+
+	for(result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++)
+	{
+		unsigned int count = 0;
+		
+		clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+		for(count = 0; count <= 9; count++){;}
+		clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+		
+		diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+		
+		result_array[result_array_idx] = diff;
+	}
+	
+	//print_results(result_array);
+		
+	printf("for loop latency: %f ns\n", get_median(result_array, TEST_COUNT));
+	
+	return 0;
+}
+
+
 int main(void)
 {	
 	if(init_test() != 0)
@@ -211,6 +241,8 @@ int main(void)
 		printf("measure_clocks");
 		return -1;
 	}
+	
+	measure_for_loop();
 	
 	return 0;
 }
