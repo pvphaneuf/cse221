@@ -232,13 +232,13 @@ int main(void)
 {	
 	if(init_test() != 0)
 	{
-		printf("measure_clocks");
+		printf("FAILURE init_test");
 		return -1;
 	}
 
 	if(measure_clocks() != 0)
 	{
-		printf("measure_clocks");
+		printf("FAILURE measure_clocks");
 		return -1;
 	}
 	
