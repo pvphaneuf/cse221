@@ -1,6 +1,11 @@
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>  // PRIu64
+#include <time.h>  // timespec
+#include <stdio.h>
+
 #include "common.h"
 
-void main(void)
+int main(void)
 {
   uint64_t ns;
   
