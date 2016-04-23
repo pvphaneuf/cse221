@@ -55,24 +55,24 @@ int compare_function(const void *a, const void *b) {
 }
 
 
-void print_results(float result_array[], unsigned int array_size) {
+void print_results(double result_array[], unsigned int array_size) {
     unsigned int n = 0;
     for (n = 0; n < array_size; n++) {
-        printf("%f ", result_array[n]);
+        printf("%lf ", result_array[n]);
     }
     printf("\n");
 }
 
 
 // Will sort array before finding median.
-float get_median(float result_array[], unsigned int array_size) {
+double get_median(double result_array[], unsigned int array_size) {
     qsort(result_array, array_size, sizeof(int), compare_function);
 
     // Currently assuming array_size will always be even
-    float result_1 = result_array[array_size / 2];
-    float result_2 = result_array[(array_size / 2) + 1];
+    double result_1 = result_array[array_size / 2];
+    double result_2 = result_array[(array_size / 2) + 1];
 
-    float median = (result_1 + result_2) / 2;
+    double median = (result_1 + result_2) / 2;
 
     return median;
 }

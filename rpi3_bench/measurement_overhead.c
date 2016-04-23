@@ -1,12 +1,12 @@
-#include "common.h"
-
 #include <time.h>
 #include <stdio.h>
+
+#include "common.h"
 
 
 const unsigned int CLOCK_TEST_COUNT = 10000;
 
-const unsigned int FOR_LOOP_TEST_COUNT = 10000;
+const unsigned int FOR_LOOP_TEST_COUNT = 100;
 
 
 int measure_clocks(void) {
@@ -15,7 +15,7 @@ int measure_clocks(void) {
     unsigned int diff = 0;
     unsigned int result_array_idx = 0;
 
-    float result_array[CLOCK_TEST_COUNT];
+    double result_array[CLOCK_TEST_COUNT];
 
     for (result_array_idx = 0; result_array_idx < CLOCK_TEST_COUNT; result_array_idx++) {
         if ((clock_gettime(CLOCK_REALTIME, &start) != 0) || (clock_gettime(CLOCK_REALTIME, &stop) != 0)) {
@@ -126,7 +126,7 @@ int measure_for_loop(unsigned int test_iteration_count)
 	struct timespec start, stop;
 	unsigned int total_time = 0;
 
-    float result_array[FOR_LOOP_TEST_COUNT];
+    double result_array[FOR_LOOP_TEST_COUNT];
 
     for(unsigned int result_array_idx = 0; result_array_idx < FOR_LOOP_TEST_COUNT; result_array_idx++)
     {
@@ -135,8 +135,16 @@ int measure_for_loop(unsigned int test_iteration_count)
         clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
         total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
-        total_time = total_time - GET_TIME_OVERHEAD;
-        float avg_iteration_time = (float)total_time / (float)test_iteration_count;
+
+        //  To deal with if total time is less than GET_TIME_OVERHEAD
+        if(total_time < GET_TIME_OVERHEAD) {
+            total_time = 0;
+        }
+        else {
+            total_time = total_time - GET_TIME_OVERHEAD;
+        }
+
+        double avg_iteration_time = (double)total_time / (double)test_iteration_count;
 
         result_array[result_array_idx] = avg_iteration_time;
     }
@@ -149,7 +157,7 @@ int measure_for_loop(unsigned int test_iteration_count)
 
 int main(void) {
     if (init_test() != 0) {
-        printf("measure_clocks");
+        printf("init_test");
         return -1;
     }
 
@@ -163,6 +171,7 @@ int main(void) {
 	measure_for_loop(100);
 	measure_for_loop(1000);
 	measure_for_loop(10000);
+    measure_for_loop(100000);
 
     return 0;
 }

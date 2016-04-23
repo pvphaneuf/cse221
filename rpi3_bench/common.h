@@ -13,8 +13,8 @@ int init_test();
 
 int compare_function(const void *a, const void *b);
 
-float get_median(float result_array[], unsigned int array_size);
+double get_median(double result_array[], unsigned int array_size);
 
-void print_results(float result_array[], unsigned int array_size);
+void print_results(double result_array[], unsigned int array_size);
 
 #endif
