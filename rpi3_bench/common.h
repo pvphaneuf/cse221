@@ -1,16 +1,18 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define _GNU_SOURCE
-#include <sched.h>
+#define BILLION 1E9
 
-#include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+extern const unsigned int GET_TIME_OVERHEAD; // 469 nanoseconds.
 
-#define BILLION 1000000000L
+extern const unsigned int CPU_INDEX; // CPU 3
 
-unsigned int const CPU_INDEX = 3;
+int init_test();
+
+int compare_function(const void *a, const void *b);
+
+float get_median(float result_array[], unsigned int array_size);
+
+void print_results(float result_array[], unsigned int array_size);
 
 #endif
