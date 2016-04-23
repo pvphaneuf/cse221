@@ -1,3 +1,5 @@
+//#define _GNU_SOURCE
+#include <sys/syscall.h>
 #include <unistd.h> // getpid()
 #include <time.h>   // timespec
 #include <stdio.h>
@@ -13,11 +15,12 @@ int system_call_test(void) {
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for (unsigned int result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++) {
-        getpid();
+        syscall(SYS_gettid);
     }
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
     double total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+    total_time = total_time - GET_TIME_OVERHEAD;
     double average_time = total_time / (double)TEST_COUNT;
 
     printf("getpid syscall latency: %f ns\n", average_time);
