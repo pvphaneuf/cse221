@@ -3,9 +3,11 @@
 
 #define BILLION 1E9
 
-extern const unsigned int GET_TIME_OVERHEAD; // 469 nanoseconds.
+extern const unsigned int GET_TIME_OVERHEAD;  // 469 nanoseconds.
 
-extern const unsigned int CPU_INDEX; // CPU 3
+extern const float FOR_LOOP_OVERHEAD;  // 6.7 nanoseconds.
+
+extern const unsigned int CPU_INDEX;  // CPU 3
 
 int init_test();
 
