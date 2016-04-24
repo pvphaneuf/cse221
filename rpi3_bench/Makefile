@@ -1,6 +1,6 @@
 CODEGEN=-mcpu=cortex-a53 -mfpu=neon -mfloat-abi=hard -mapcs-frame
 CFLAGS=-O0 -std=gnu11 -Wall $(CODEGEN)
-EXES=measurement_overhead hpet_clock_resolutions procedure_call
+EXES=measurement_overhead hpet_clock_resolutions procedure_call system_call_overhead
 
 all: $(EXES)
 
