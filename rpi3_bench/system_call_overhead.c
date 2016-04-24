@@ -23,7 +23,26 @@ int system_call_test(void) {
     total_time = total_time - GET_TIME_OVERHEAD;
     double average_time = total_time / (double)TEST_COUNT;
 
-    printf("getpid syscall latency: %f ns\n", average_time);
+    printf("syscall(SYS_gettid) syscall latency: %f ns\n", average_time);
+
+    return 0;
+}
+
+
+int system_call_wrapper_test(void) {
+    struct timespec start, stop;
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    for (unsigned int result_array_idx = 0; result_array_idx < TEST_COUNT; result_array_idx++) {
+        getpid();
+    }
+    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+
+    double total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+    total_time = total_time - GET_TIME_OVERHEAD;
+    double average_time = total_time / (double)TEST_COUNT;
+
+    printf("getpid syscall wrapper latency: %f ns\n", average_time);
 
     return 0;
 }
@@ -36,6 +55,8 @@ int main(void) {
     }
 
     system_call_test();
+
+    system_call_wrapper_test();
 
     return 0;
 }
