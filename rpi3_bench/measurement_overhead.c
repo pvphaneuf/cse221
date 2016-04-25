@@ -23,7 +23,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -37,7 +37,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -51,7 +51,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -65,7 +65,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -80,7 +80,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -95,7 +95,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -110,7 +110,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        diff = timespec_diff_to_nsecs(start, stop);
 
         result_array[result_array_idx] = diff;
     }
@@ -134,7 +134,7 @@ int measure_for_loop(unsigned int test_iteration_count)
         for(unsigned int count = 0; count < test_iteration_count; count++){}
         clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
-        total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        total_time = timespec_diff_to_nsecs(start, stop);
 
         //  To deal with if total time is less than GET_TIME_OVERHEAD
         if(total_time < GET_TIME_OVERHEAD) {
