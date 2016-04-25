@@ -38,7 +38,8 @@ void print_avg_syscall(void) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
     double total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
-    total_time = total_time - GET_TIME_OVERHEAD;
+    total_time = total_time - GET_TIME_OVERHEAD - (FOR_LOOP_OVERHEAD * AVG_TEST_COUNT);
+
     double average_time = total_time / (double)AVG_TEST_COUNT;
 
     printf("syscall(SYS_gettid) syscall average latency: %f ns\n\n", average_time);
@@ -82,7 +83,8 @@ void print_average_syscall(void) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
     double total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
-    total_time = total_time - GET_TIME_OVERHEAD;
+    total_time = total_time - GET_TIME_OVERHEAD - (FOR_LOOP_OVERHEAD * AVG_TEST_COUNT);
+
     double average_time = total_time / (double)AVG_TEST_COUNT;
 
     printf("getpid syscall wrapper average latency: %f ns\n\n", average_time);
