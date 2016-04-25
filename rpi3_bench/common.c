@@ -76,3 +76,8 @@ double get_median(double result_array[], unsigned int array_size) {
 
     return median;
 }
+
+double timespec_diff_to_nsecs(struct timespec start, struct timespec end) {
+    return (double)(end.tv_sec - start.tv_sec) * 1E9 + \
+        (double)(end.tv_nsec - start.tv_nsec);
+}
