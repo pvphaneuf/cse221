@@ -20,5 +20,8 @@ procedure_call: procedure_call.o
 system_call_overhead: system_call_overhead.o common.o
 	gcc -o system_call_overhead.out system_call_overhead.o common.o -I -lrt -lcpufreq $(CFLAGS)
 
+context_switch: context_switch.o common.o
+	gcc -o context_switch.out context_switch.o common.o -lrt -lcpufreq $(CFLAGS)
+
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
