@@ -7,18 +7,13 @@
 #include <sys/wait.h>
 #include <time.h>   // timespec, clock_gettime()
 #include <unistd.h> // fork()
-
-#include <linux/futex.h>  // futex: fast user-space mutex (fast user-space locking).
+#include <linux/futex.h>
 
 #include "common.h"
 
-static inline long long unsigned time_ns(struct timespec *const ts) {
-    if (clock_gettime(CLOCK_MONOTONIC_RAW, ts)) {
-        exit(1);
-    }
-    return ((long long unsigned) ts->tv_sec) * 1000000000LLU
-           + (long long unsigned) ts->tv_nsec;
-}
+
+const unsigned int TEST_COUNT = 500000;
+
 
 int main(void) {
     if (init_test() != 0) {
@@ -26,8 +21,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    const int iterations = 500000;
-    struct timespec ts;
+    struct timespec start, stop;
 
     // http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/shm/shmget.html
     // shmget: allocates a System V shared memory segment.
@@ -46,26 +40,23 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    // shmat: attaches the shared memory segment identified by shmid to the address space of the calling process.
-    // sharing futex between processes.
     int *futex = shmat(shm_id, NULL, 0);
 
-    // Execution for CHILD process.
     *futex = 0xA;
-    if (child_process_pid == 0) {
-        for (unsigned int i = 0; i < iterations; i++) {
 
-            // sched_yield() causes the calling thread to relinquish the CPU.  The
-            // thread is moved to the end of the queue for its static priority and a
-            // new thread gets to run.
+    // Execution for CHILD process.
+    if (child_process_pid == 0) {
+        for (unsigned int i = 0; i < TEST_COUNT; i++) {
+
             sched_yield();
 
-            // futex will only sleep if *futex = 0xA.
+            // sleep child process
             while (syscall(SYS_futex, futex, FUTEX_WAIT, 0xA, NULL, NULL, 42)) {
                 // retry
                 sched_yield();
             }
 
+            // child process has awoken and will now set futex value to enable parent to sleep.
             *futex = 0xB;
             while (!syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42)) {
                 // retry
@@ -75,25 +66,37 @@ int main(void) {
         exit(EXIT_SUCCESS);
     }
 
-    // Execution for PARENT process.
-    const long long unsigned start_ns = time_ns(&ts);
-    for (unsigned int i = 0; i < iterations; i++) {
+    // Execution for PARENT process, and timing it.
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+
+    for (unsigned int i = 0; i < TEST_COUNT; i++) {
+
+        // Wake child process
         *futex = 0xA;
         while (!syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42)) {
             // retry
             sched_yield();
         }
         sched_yield();
+
+        // Sleep parent process.
         while (syscall(SYS_futex, futex, FUTEX_WAIT, 0xB, NULL, NULL, 42)) {
             // retry
             sched_yield();
         }
     }
-    const long long unsigned delta = time_ns(&ts) - start_ns;
 
-    const int nswitches = iterations << 2;
-    printf("%i process context switches in %lluns (%.1fns/ctxsw)\n",
-           nswitches, delta, (delta / (float) nswitches));
+    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+
+    const long long unsigned int total_time = BILLION * (stop.tv_sec - start.tv_sec)
+                                              + stop.tv_nsec - start.tv_nsec
+                                              - GET_TIME_OVERHEAD
+                                              - (TEST_COUNT * FOR_LOOP_OVERHEAD);
+
+    const int nswitches = TEST_COUNT << 2;
+    printf("%i process context switches in %lluns (%.1fns per context switch)\n",
+           nswitches, total_time, (total_time / (float) nswitches));
+
     wait(futex);
 
     exit(EXIT_SUCCESS);
