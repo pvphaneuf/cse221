@@ -23,7 +23,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -37,7 +37,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -51,7 +51,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -65,7 +65,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -80,7 +80,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -95,7 +95,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -110,7 +110,7 @@ int measure_clocks(void) {
             return -1;
         }
 
-        diff = timespec_diff_to_nsecs(start, stop);
+        diff = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
 
         result_array[result_array_idx] = diff;
     }
@@ -121,35 +121,21 @@ int measure_clocks(void) {
 }
 
 
-int measure_for_loop(unsigned int test_iteration_count)
+int measure_for_loop(const unsigned int test_iteration_count)
 {
 	struct timespec start, stop;
 	unsigned int total_time = 0;
 
-    double result_array[FOR_LOOP_TEST_COUNT];
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    for(unsigned int count = 0; count < test_iteration_count; count++){}
+    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
-    for(unsigned int result_array_idx = 0; result_array_idx < FOR_LOOP_TEST_COUNT; result_array_idx++)
-    {
-        clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-        for(unsigned int count = 0; count < test_iteration_count; count++){}
-        clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+    total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+    total_time = total_time - GET_TIME_OVERHEAD;
 
-        total_time = timespec_diff_to_nsecs(start, stop);
+    const double average_per_iteration_time = total_time / (double)test_iteration_count;
 
-        //  To deal with if total time is less than GET_TIME_OVERHEAD
-        if(total_time < GET_TIME_OVERHEAD) {
-            total_time = 0;
-        }
-        else {
-            total_time = total_time - GET_TIME_OVERHEAD;
-        }
-
-        double avg_iteration_time = (double)total_time / (double)test_iteration_count;
-
-        result_array[result_array_idx] = avg_iteration_time;
-    }
-
-    printf("FOR loop latency: %f ns with %u iterations\n", get_median(result_array, FOR_LOOP_TEST_COUNT), test_iteration_count);
+    printf("FOR loop latency: %f ns with %u iterations\n", average_per_iteration_time, test_iteration_count);
 
 	return 0;
 }
