@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <time.h>
+
 #define BILLION 1E9
 
 extern const unsigned int GET_TIME_OVERHEAD;  // 469 nanoseconds.
