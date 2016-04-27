@@ -25,7 +25,7 @@
 
 #define PER_PROCESS_PER_ITERATION_CONTEXT_SWITCH_COUNT 2
 
-#define FUTEX_WAKE_OVERHEAD 3818.6
+#define FUTEX_WAKE_OVERHEAD 3818.6  // nsecs
 
 
 unsigned int get_total_context_switches() {
@@ -114,7 +114,7 @@ int main(void) {
 
     const int context_switch_count = get_total_context_switches();
 
-    printf("%i process context switches in %i cycles (%i cycles per context switch)\n",
+    printf("%i PROCESS context switches in %i cycles (%i cycles per context switch)\n",
            context_switch_count, (int)total_cycles, (int)(total_cycles / (double) context_switch_count));
 
     int wait_status = 0;
