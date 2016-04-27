@@ -46,7 +46,7 @@ int init_test() {
 
     cpu_cur = (cpufreq_get_freq_kernel(CPU_INDEX) / 1000);
 
-    printf("Current CPU Frequency: %lu MHz\n\n", cpu_cur);
+    printf("Current CPU %u Frequency: %lu MHz\n\n", CPU_INDEX, cpu_cur);
 
     return 0;
 }
