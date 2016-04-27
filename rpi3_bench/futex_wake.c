@@ -100,7 +100,7 @@ int main(void) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
     for (unsigned int i = 0; i < TEST_COUNT_PER_PROCESS; i++) {
-        syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42);  // Assume that a successful and unsuccessful wait results in the same amount of time.
+        syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42);  // Assume that a successful and unsuccessful FUTEX_WAKE results in the same amount of time.
     }
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
