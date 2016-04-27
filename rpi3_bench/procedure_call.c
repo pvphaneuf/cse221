@@ -50,11 +50,6 @@ int proc7(int x1, int x2, int x3, int x4, int x5, int x6, int x7) {
 }
 #define cproc7(i) proc7(i, i, i, i, i, i, i)
 
-double timespec_to_nsecs(struct timespec start, struct timespec end) {
-    return (double)(end.tv_sec - start.tv_sec) * 1E9 + \
-        (double)(end.tv_nsec - start.tv_nsec);
-}
-
 int double_compare(const void *p1, const void *p2) {
     double d1 = *(double *)p1;
     double d2 = *(double *)p2;
@@ -74,7 +69,7 @@ int double_compare(const void *p1, const void *p2) {
         } \
         clock_gettime(CLOCK_MONOTONIC_RAW, &end); \
 \
-        measures[m] = timespec_to_nsecs(start, end) / ITERATIONS; \
+        measures[m] = timespec_diff_to_nsecs(start, end) / ITERATIONS; \
     } \
 \
     qsort(measures, MEASUREMENTS, sizeof(double), double_compare); \
@@ -94,7 +89,7 @@ int main() {
     for (int i = 0; i < ITERATIONS; ++i) {
     }
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-    double baseline = timespec_to_nsecs(start, end) / ITERATIONS;
+    double baseline = timespec_diff_to_nsecs(start, end) / ITERATIONS;
     printf("baseline loop: %f\n", baseline);
 
     printf("0 args: %f\n", get_avg_measure(start, end, measures, 0)-baseline);
