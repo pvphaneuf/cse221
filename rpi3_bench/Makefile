@@ -1,6 +1,6 @@
 CODEGEN=-mcpu=cortex-a53 -mfpu=neon -mfloat-abi=hard -mapcs-frame
 CFLAGS=-O0 -std=gnu11 -Wall $(CODEGEN)
-EXES=measurement_overhead hpet_clock_resolutions procedure_call system_call_overhead task_creation for_loop
+EXES=clock_gettime hpet_clock_resolutions procedure_call system_call_overhead task_creation for_loop
 COMMON_FLAGS=common.o -lrt -lcpufreq -pthread $(CFLAGS)
 
 all: $(EXES)
@@ -9,8 +9,8 @@ all: $(EXES)
 clean:
 	-rm *.out *.o
 
-measurement_overhead: measurement_overhead.o common.o
-	gcc -o measurement_overhead.out measurement_overhead.o $(COMMON_FLAGS)
+clock_gettime: clock_gettime.o common.o
+	gcc -o clock_gettime.out clock_gettime.o $(COMMON_FLAGS)
 
 for_loop: for_loop.o common.o
 	gcc -o for_loop.out for_loop.o $(COMMON_FLAGS)
