@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h> // ceil()
 
 #include "common.h"
 
@@ -12,9 +13,11 @@
 #define CPU_INDEX 3
 
 
-const unsigned int GET_TIME_OVERHEAD = 469; // in nanoseconds.
+const unsigned int GET_TIME_OVERHEAD = 469;  // in nanoseconds.
 
-const float FOR_LOOP_OVERHEAD = 6.7;
+const double FOR_LOOP_OVERHEAD = 5.83;  // in nanoseconds.
+
+const double NSEC_PER_CYCLE = 0.833;
 
 
 int init_test() {
@@ -82,4 +85,8 @@ double get_median(double result_array[], unsigned int array_size) {
 double timespec_diff_to_nsecs(struct timespec start, struct timespec end) {
     return (double)(end.tv_sec - start.tv_sec) * 1E9 + \
         (double)(end.tv_nsec - start.tv_nsec);
+}
+
+double nsecs_to_cycles(const double time_diff) {
+    return ceil(time_diff / NSEC_PER_CYCLE);
 }

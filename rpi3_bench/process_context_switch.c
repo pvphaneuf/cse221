@@ -19,7 +19,18 @@
 #include "common.h"
 
 
-const unsigned int TEST_COUNT = 100000;
+#define PER_PROCESS_TEST_COUNT 100000
+
+#define PROCESS_COUNT 2
+
+#define PER_PROCESS_PER_ITERATION_CONTEXT_SWITCH_COUNT 2
+
+#define FUTEX_WAKE_OVERHEAD 3818.6
+
+
+unsigned int get_total_context_switches() {
+    return PER_PROCESS_TEST_COUNT * PROCESS_COUNT * PER_PROCESS_PER_ITERATION_CONTEXT_SWITCH_COUNT;
+}
 
 
 int main(void) {
@@ -53,7 +64,7 @@ int main(void) {
 
     // Execution for CHILD process.
     if (child_pid == 0) {
-        for (unsigned int i = 0; i < TEST_COUNT; i++) {
+        for (unsigned int i = 0; i < PER_PROCESS_TEST_COUNT; i++) {
 
             // enable parent process to execute (assuming this is on a single core).
             sched_yield();
@@ -76,7 +87,7 @@ int main(void) {
     // Execution for PARENT process, and timing it.
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
-    for (unsigned int i = 0; i < TEST_COUNT; i++) {
+    for (unsigned int i = 0; i < PER_PROCESS_TEST_COUNT; i++) {
 
         *futex = 0xA;
 
@@ -96,11 +107,15 @@ int main(void) {
     const long long unsigned int total_time = BILLION * (stop.tv_sec - start.tv_sec)
                                               + stop.tv_nsec - start.tv_nsec
                                               - GET_TIME_OVERHEAD
-                                              - (TEST_COUNT * FOR_LOOP_OVERHEAD);
+                                              - (FOR_LOOP_OVERHEAD * PER_PROCESS_TEST_COUNT)
+                                              - (FUTEX_WAKE_OVERHEAD * PER_PROCESS_TEST_COUNT);
 
-    const int context_switch_count = TEST_COUNT << 2;
-    printf("%i process context switches in %lluns (%.1fns per context switch)\n",
-           context_switch_count, total_time, (total_time / (float) context_switch_count));
+    const double total_cycles = nsecs_to_cycles((double) total_time);
+
+    const int context_switch_count = get_total_context_switches();
+
+    printf("%i process context switches in %i cycles (%i cycles per context switch)\n",
+           context_switch_count, (int)total_cycles, (int)(total_cycles / (double) context_switch_count));
 
     int wait_status = 0;
     waitpid(child_pid, &wait_status, 0);
