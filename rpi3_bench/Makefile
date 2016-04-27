@@ -1,6 +1,6 @@
 CODEGEN=-mcpu=cortex-a53 -mfpu=neon -mfloat-abi=hard -mapcs-frame
 CFLAGS=-O0 -std=gnu11 -Wall $(CODEGEN)
-EXES=clock_gettime hpet_clock_resolutions procedure_call system_call_overhead task_creation for_loop futex_wake
+EXES=clock_gettime hpet_clock_resolutions procedure_call system_call_overhead task_creation for_loop futex_wake futex_wait
 COMMON_FLAGS=common.o -lrt -lcpufreq -pthread $(CFLAGS)
 
 all: $(EXES)
@@ -11,6 +11,9 @@ clean:
 
 futex_wake: futex_wake.o common.o
 	gcc -o futex_wake.out futex_wake.o $(COMMON_FLAGS)
+
+futex_wait: futex_wait.o common.o
+	gcc -o futex_wait.out futex_wait.o $(COMMON_FLAGS)
 
 clock_gettime: clock_gettime.o common.o
 	gcc -o clock_gettime.out clock_gettime.o $(COMMON_FLAGS)
