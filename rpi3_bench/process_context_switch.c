@@ -1,3 +1,10 @@
+/*
+ * This implementation is derivative a of
+ * https://github.com/tsuna/contextswitch/blob/master/timectxsw.c
+ *
+ * License soon to be attached.
+ */
+
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>  // exit()
@@ -12,7 +19,7 @@
 #include "common.h"
 
 
-const unsigned int TEST_COUNT = 500000;
+const unsigned int TEST_COUNT = 100;
 
 
 int main(void) {
@@ -48,19 +55,19 @@ int main(void) {
     if (child_pid == 0) {
         for (unsigned int i = 0; i < TEST_COUNT; i++) {
 
+            // enable parent process to execute (assuming this is on a single core).
             sched_yield();
 
             // sleep child process
             while (syscall(SYS_futex, futex, FUTEX_WAIT, 0xA, NULL, NULL, 42)) {
-                // retry
-                sched_yield();
+                sched_yield();  // retry
             }
 
             // child process has awoken and will now set futex value to enable parent to sleep.
             *futex = 0xB;
+
             while (!syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42)) {
-                // retry
-                sched_yield();
+                sched_yield();  // retry
             }
         }
         exit(EXIT_SUCCESS);
@@ -71,18 +78,16 @@ int main(void) {
 
     for (unsigned int i = 0; i < TEST_COUNT; i++) {
 
-        // Wake child process
         *futex = 0xA;
+
         while (!syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42)) {
-            // retry
-            sched_yield();
+            sched_yield();  // retry
         }
+
         sched_yield();
 
-        // Sleep parent process.
         while (syscall(SYS_futex, futex, FUTEX_WAIT, 0xB, NULL, NULL, 42)) {
-            // retry
-            sched_yield();
+            sched_yield();  // retry
         }
     }
 
@@ -93,9 +98,9 @@ int main(void) {
                                               - GET_TIME_OVERHEAD
                                               - (TEST_COUNT * FOR_LOOP_OVERHEAD);
 
-    const int nswitches = TEST_COUNT << 2;
+    const int context_switch_count = TEST_COUNT << 2;
     printf("%i process context switches in %lluns (%.1fns per context switch)\n",
-           nswitches, total_time, (total_time / (float) nswitches));
+           context_switch_count, total_time, (total_time / (float) context_switch_count));
 
     int wait_status = 0;
     waitpid(child_pid, &wait_status, 0);

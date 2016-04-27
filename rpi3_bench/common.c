@@ -8,11 +8,13 @@
 
 #include "common.h"
 
+
+#define CPU_INDEX 3
+
+
 const unsigned int GET_TIME_OVERHEAD = 469; // in nanoseconds.
 
 const float FOR_LOOP_OVERHEAD = 6.7;
-
-const unsigned int CPU_INDEX = 3;
 
 
 int init_test() {
