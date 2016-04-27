@@ -37,19 +37,24 @@ unsigned int get_total_context_switches() {
 
 
 static void* thread(void* restrict ftx) {
+
     int* futex = (int*) ftx;
+
     for (int i = 0; i < PER_THREAD_TEST_COUNT; i++) {
+
         sched_yield();
+
         while (syscall(SYS_futex, futex, FUTEX_WAIT, 0xA, NULL, NULL, 42)) {
-            // retry
-            sched_yield();
+            sched_yield();  // retry
         }
+
         *futex = 0xB;
+
         while (!syscall(SYS_futex, futex, FUTEX_WAKE, 1, NULL, NULL, 42)) {
-            // retry
-            sched_yield();
+            sched_yield();  // retry
         }
     }
+
     return NULL;
 }
 
