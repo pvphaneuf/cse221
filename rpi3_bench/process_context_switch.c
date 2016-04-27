@@ -19,7 +19,7 @@
 #include "common.h"
 
 
-const unsigned int TEST_COUNT = 100;
+const unsigned int TEST_COUNT = 100000;
 
 
 int main(void) {
