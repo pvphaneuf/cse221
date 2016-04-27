@@ -121,26 +121,6 @@ int measure_clocks(void) {
 }
 
 
-int measure_for_loop(const unsigned int test_iteration_count)
-{
-	struct timespec start, stop;
-	unsigned int total_time = 0;
-
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-    for(unsigned int count = 0; count < test_iteration_count; count++){}
-    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-
-    total_time = BILLION * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
-    total_time = total_time - GET_TIME_OVERHEAD;
-
-    const double average_per_iteration_time = total_time / (double)test_iteration_count;
-
-    printf("FOR loop latency: %f ns with %u iterations\n", average_per_iteration_time, test_iteration_count);
-
-	return 0;
-}
-
-
 int main(void) {
     if (init_test() != 0) {
         printf("init_test");
@@ -151,13 +131,6 @@ int main(void) {
         printf("measure_clocks");
         return -1;
     }
-
-	measure_for_loop(1);
-	measure_for_loop(10);
-	measure_for_loop(100);
-	measure_for_loop(1000);
-	measure_for_loop(10000);
-    measure_for_loop(100000);
-
+    
     return 0;
 }
