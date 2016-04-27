@@ -7,7 +7,6 @@
 int test_iteration_count_1(void)
 {
     struct timespec start, stop;
-    unsigned int total_time = 0;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for(unsigned int count = 0; count < 1; ++count){}
@@ -27,7 +26,6 @@ int test_iteration_count_1(void)
 int test_iteration_count_10(void)
 {
     struct timespec start, stop;
-    unsigned int total_time = 0;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for(unsigned int count = 0; count < 10; ++count){}
@@ -47,7 +45,6 @@ int test_iteration_count_10(void)
 int test_iteration_count_100(void)
 {
     struct timespec start, stop;
-    unsigned int total_time = 0;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for(unsigned int count = 0; count < 100; ++count){}
@@ -67,7 +64,6 @@ int test_iteration_count_100(void)
 int test_iteration_count_1000(void)
 {
     struct timespec start, stop;
-    unsigned int total_time = 0;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for(unsigned int count = 0; count < 1000; ++count){}
@@ -87,7 +83,6 @@ int test_iteration_count_1000(void)
 int test_iteration_count_10000(void)
 {
     struct timespec start, stop;
-    unsigned int total_time = 0;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     for(unsigned int count = 0; count < 10000; ++count){}
