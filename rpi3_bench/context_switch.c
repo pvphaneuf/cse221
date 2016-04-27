@@ -34,8 +34,8 @@ int main(void) {
     }
 
     // Get child process.
-    const pid_t child_process_pid = fork();
-    if (child_process_pid == -1) {
+    const pid_t child_pid = fork();
+    if (child_pid == -1) {
         printf("FAILURE fork");
         exit(EXIT_FAILURE);
     }
@@ -45,7 +45,7 @@ int main(void) {
     *futex = 0xA;
 
     // Execution for CHILD process.
-    if (child_process_pid == 0) {
+    if (child_pid == 0) {
         for (unsigned int i = 0; i < TEST_COUNT; i++) {
 
             sched_yield();
@@ -97,7 +97,8 @@ int main(void) {
     printf("%i process context switches in %lluns (%.1fns per context switch)\n",
            nswitches, total_time, (total_time / (float) nswitches));
 
-    wait(futex);
+    int wait_status = 0;
+    waitpid(child_pid, &wait_status, 0);
 
     exit(EXIT_SUCCESS);
 }
