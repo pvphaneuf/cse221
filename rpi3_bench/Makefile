@@ -36,5 +36,8 @@ task_creation: task_creation.o common.o
 process_context_switch: process_context_switch.o common.o
 	gcc -o process_context_switch.out process_context_switch.o $(COMMON_FLAGS)
 
+thread_context_switch: thread_context_switch.o common.o
+	gcc -o thread_context_switch.out thread_context_switch.o $(COMMON_FLAGS)
+
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
