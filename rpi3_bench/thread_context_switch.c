@@ -105,12 +105,12 @@ int main(void) {
                                               - (FUTEX_WAKE_OVERHEAD * PER_THREAD_TEST_COUNT)
                                               - (SYSCALL_OVERHEAD * 2 * PER_THREAD_TEST_COUNT); // Two syscalls: FUTEX_WAIT and sched_yield
 
-    const double total_cycles = nsecs_to_cycles((double) total_time);
+    const long long unsigned int total_cycles = nsecs_to_cycles(total_time);
 
     const int context_switch_count = get_total_context_switches();
 
-    printf("%i THREAD context switches in %i cycles (%i cycles per context switch)\n",
-           context_switch_count, (int)total_cycles, (int)(total_cycles / (double) context_switch_count));
+    printf("%i THREAD context switches in %llu cycles (%llu cycles per context switch)\n",
+           context_switch_count, total_cycles, (total_cycles / context_switch_count));
 
     int wait_status = 0;
     wait(&wait_status);

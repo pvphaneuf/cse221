@@ -22,6 +22,6 @@ void print_results(double result_array[], unsigned int array_size);
 double timespec_diff_to_nsecs(struct timespec start, struct timespec end);
 
 // Will round up to the nearest cycle count
-double nsecs_to_cycles(const double time_diff);
+long long unsigned int nsecs_to_cycles(const long long unsigned int time_diff);
 
 #endif

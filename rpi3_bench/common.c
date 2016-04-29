@@ -89,6 +89,6 @@ double timespec_diff_to_nsecs(struct timespec start, struct timespec end) {
         (double)(end.tv_nsec - start.tv_nsec);
 }
 
-double nsecs_to_cycles(const double time_diff) {
+long long unsigned int nsecs_to_cycles(const long long unsigned int time_diff) {
     return ceil(time_diff / NSEC_PER_CYCLE);
 }
