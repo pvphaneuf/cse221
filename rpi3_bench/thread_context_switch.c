@@ -102,7 +102,8 @@ int main(void) {
                                               + stop.tv_nsec - start.tv_nsec
                                               - GET_TIME_OVERHEAD
                                               - (FOR_LOOP_OVERHEAD * PER_THREAD_TEST_COUNT)
-                                              - (FUTEX_WAKE_OVERHEAD * PER_THREAD_TEST_COUNT);
+                                              - (FUTEX_WAKE_OVERHEAD * PER_THREAD_TEST_COUNT)
+                                              - (SYSCALL_OVERHEAD * 2 * PER_THREAD_TEST_COUNT); // Two syscalls: FUTEX_WAIT and sched_yield
 
     const double total_cycles = nsecs_to_cycles((double) total_time);
 

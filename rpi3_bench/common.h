@@ -9,6 +9,8 @@ extern const unsigned int GET_TIME_OVERHEAD;  // 469 nanoseconds.
 
 extern const double FOR_LOOP_OVERHEAD;  // 5.83 nanoseconds.
 
+extern const double SYSCALL_OVERHEAD;  // 282.5 nanoseconds
+
 int init_test();
 
 int compare_function(const void *a, const void *b);

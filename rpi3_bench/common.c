@@ -13,11 +13,13 @@
 #define CPU_INDEX 3
 
 
-const unsigned int GET_TIME_OVERHEAD = 469;  // in nanoseconds.
+const unsigned int GET_TIME_OVERHEAD = 469;  // nanoseconds.
 
-const double FOR_LOOP_OVERHEAD = 5.83;  // in nanoseconds.
+const double FOR_LOOP_OVERHEAD = 5.83;  // nanoseconds.
 
-const double NSEC_PER_CYCLE = 0.833;
+const double SYSCALL_OVERHEAD = 282.5;  // nanoseconds
+
+const double NSEC_PER_CYCLE = 0.833;  // nanoseconds
 
 
 int init_test() {
