@@ -60,8 +60,7 @@ void test_4Bytes_to_500MBytes(void) {
 
         free(memory_pointer);
 
-        const long long unsigned int total_time = BILLION * (end.tv_sec - start.tv_sec)
-                                                  + end.tv_nsec - start.tv_nsec
+        const long long unsigned int total_time = timespec_diff_to_nsecs(start, end)
                                                   - GET_TIME_OVERHEAD
                                                   - (FOR_LOOP_OVERHEAD * TEST_COUNT)
                                                   - (FOR_LOOP_OVERHEAD * RAND_OVERHEAD);
