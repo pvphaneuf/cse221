@@ -21,6 +21,8 @@ const double SYSCALL_OVERHEAD = 282.5;  // nanoseconds
 
 const double NSEC_PER_CYCLE = 0.833;  // nanoseconds
 
+const double RAND_OVERHEAD = 74.0;  // nanoseconds
+
 
 int init_test() {
     // set the core-affinity

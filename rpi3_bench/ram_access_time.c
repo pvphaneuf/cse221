@@ -38,9 +38,9 @@ int main(void) {
 
     srand(time(NULL));
 
-    for (int k = 0; k < SIZE_LEN; k++) {
+    for (int memory_size_iterator = 0; memory_size_iterator < SIZE_LEN; memory_size_iterator++) {
 
-        int size = (int) sizes[k];  // TODO: after establishing results, try using an array rather than a pointer to an array and see what the difference is.
+        int size = (int) sizes[memory_size_iterator];  // TODO: after establishing results, try using an array rather than a pointer to an array and see what the difference is.
         int *memory_pointer = (int *) malloc(size);  // allocate memory for test.
         if (!memory_pointer) {
             printf("FAILURE Couldn't allocate memory of %i bytes\n", size);
@@ -48,16 +48,18 @@ int main(void) {
         }
 
         // Set all int size locations in memory to 1.
-        for (int t = 0; t < size / sizeof(int); t++) {
-            memory_pointer[t] = 1;
+        for (int memory_index = 0; memory_index < size / sizeof(int); memory_index++) {
+            memory_pointer[memory_index] = 1;
         }
 
         clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-        for (int j = 0; j < TEST_COUNT; j++) {
+        for (int test_iteration = 0; test_iteration < TEST_COUNT; test_iteration++) {
 
             // Using random stride size, since assuming we don't know cache line size.
-            int stride = rand() % (size / sizeof(int));  // TODO: this is going to be considered in timing. Will have to handle.
-            int s = *(memory_pointer + stride);
+            int stride = rand() % (size / sizeof(int));
+
+            // Using memory value.
+            int val = *(memory_pointer + stride);
         }
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
@@ -66,7 +68,8 @@ int main(void) {
         const long long unsigned int total_time = BILLION * (end.tv_sec - start.tv_sec)
                                                   + end.tv_nsec - start.tv_nsec
                                                   - GET_TIME_OVERHEAD
-                                                  - (FOR_LOOP_OVERHEAD * TEST_COUNT);
+                                                  - (FOR_LOOP_OVERHEAD * TEST_COUNT)
+                                                  - (FOR_LOOP_OVERHEAD * RAND_OVERHEAD);
 
         double average = (total_time / TEST_COUNT);
         printf("Int: %i\t%f\n", size, average);

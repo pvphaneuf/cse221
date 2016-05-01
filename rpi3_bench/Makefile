@@ -42,6 +42,9 @@ thread_context_switch: thread_context_switch.o common.o
 ram_access_time: ram_access_time.o common.o
 	gcc -o ram_access_time.out ram_access_time.o $(COMMON_FLAGS)
 
+rand: rand.o common.o
+	gcc -o rand.out rand.o $(COMMON_FLAGS)
+
 
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
