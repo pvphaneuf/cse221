@@ -39,5 +39,9 @@ process_context_switch: process_context_switch.o common.o
 thread_context_switch: thread_context_switch.o common.o
 	gcc -o thread_context_switch.out thread_context_switch.o $(COMMON_FLAGS)
 
+ram_access_time: ram_access_time.o common.o
+	gcc -o ram_access_time.out ram_access_time.o $(COMMON_FLAGS)
+
+
 %.o: %.c
 	gcc -c -o $@ $^ $(CFLAGS)
