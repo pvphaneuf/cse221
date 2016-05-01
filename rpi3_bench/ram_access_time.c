@@ -65,8 +65,11 @@ void test_4Bytes_to_500MBytes(void) {
                                                   - (FOR_LOOP_OVERHEAD * TEST_COUNT)
                                                   - (FOR_LOOP_OVERHEAD * RAND_OVERHEAD);
 
-        double average = (total_time / TEST_COUNT);
-        printf("%i\t%i\t%f\n", size, (int) log2(size), average);
+        const long long unsigned int total_cycles = nsecs_to_cycles(total_time);
+
+        double average_time = (total_time / TEST_COUNT);
+
+        printf("%i\t%i\t%f\t%i\n", size, (int) log2(size), average_time, (total_cycles / TEST_COUNT));
     }
 }
 
