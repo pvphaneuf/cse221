@@ -1,6 +1,6 @@
 //#include <unistd.h>  // getpagesize()
 #include <stdio.h>
-#include <math.h>
+#include <math.h>  //pow(), log2()
 #include <stdlib.h>  // srand(), rand()
 #include <time.h>  // time
 
@@ -66,7 +66,7 @@ void test_4Bytes_to_500MBytes(void) {
                                                   - (FOR_LOOP_OVERHEAD * RAND_OVERHEAD);
 
         double average = (total_time / TEST_COUNT);
-        printf("Memory Bytes Size: %i\tAverage Access Latency: %f\n", size, average);
+        printf("%i\t%i\t%f\n", size, (int) log2(size), average);
     }
 }
 
