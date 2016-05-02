@@ -28,6 +28,7 @@ double measure_wrmem(word *mem, int size) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
     // Return the bytes per ns.
+    // Not accounting for FOR loop overhead since we're expecting compiler optimization.
     return sizeof(word) * size / \
         (timespec_diff_to_nsecs(start, end) - GET_TIME_OVERHEAD);
 }
@@ -44,6 +45,7 @@ double measure_rdmem(word *mem, int size) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
     // Return the bytes per ns.
+    // Not accounting for FOR loop overhead since we're expecting compiler optimization.
     return sizeof(word) * size / \
         (timespec_diff_to_nsecs(start, end) - GET_TIME_OVERHEAD);
 }
