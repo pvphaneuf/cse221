@@ -1,15 +1,12 @@
 //#include <unistd.h>  // getpagesize()
 #include <stdio.h>
 #include <math.h>  //pow(), log2()
-#include <stdlib.h>  // srand(), rand()
+#include <stdlib.h>  // srand(), rand(), malloc()
+#include <string.h>  // memset()
 #include <time.h>  // time
+#include <limits.h>
 
 #include "common.h"
-
-
-// L1 Cache = 32 KB
-// L2 Cache = 512 KB
-
 
 #define TEST_COUNT 100000
 
@@ -42,10 +39,8 @@ void test_4Bytes_to_500MBytes(void) {
             exit(EXIT_FAILURE);
         }
 
-        // Set all int size locations in memory to 1.
-        for (int memory_index = 0; memory_index < size / sizeof(int); memory_index++) {
-            memory_pointer[memory_index] = 1;
-        }
+        // Initialize memory region.
+        memset(memory_pointer, INT_MAX, size);
 
         clock_gettime(CLOCK_MONOTONIC_RAW, &start);
         for (int test_iteration = 0; test_iteration < TEST_COUNT; test_iteration++) {
@@ -54,7 +49,7 @@ void test_4Bytes_to_500MBytes(void) {
             int stride = rand() % (size / sizeof(int));
 
             // Integer access, as directed by project description.
-            int val = *(memory_pointer + stride);
+            int touch = *(memory_pointer + stride);
         }
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
@@ -69,58 +64,7 @@ void test_4Bytes_to_500MBytes(void) {
 
         double average_time = (total_time / TEST_COUNT);
 
-        printf("%i\t%i\t%f\t%i\n", size, (int) log2(size), average_time, (total_cycles / TEST_COUNT));
-    }
-}
-
-void test_500MBytes_to_800MBytes(void) {
-    struct timespec start, end;
-
-    int sizes[3];
-
-    // Incrementing by 50 MBs
-    for (int index = 0; index < 6; index++) {
-        sizes[index] = pow(2, 29)
-                       + (524288 * 100) * (index + 1); // going up by 50 MBs.
-    }
-
-    srand(time(NULL));
-
-    for (int memory_size_iterator = 0; memory_size_iterator < 3; memory_size_iterator++) {
-
-        int size = (int) sizes[memory_size_iterator];
-        int *memory_pointer = (int *) malloc(size);  // allocate memory for test.
-        if (!memory_pointer) {
-            printf("FAILURE Couldn't allocate memory of %i bytes\n", size);
-            exit(EXIT_FAILURE);
-        }
-
-        // Set all int size locations in memory to 1.
-        for (int memory_index = 0; memory_index < size / sizeof(int); memory_index++) {
-            memory_pointer[memory_index] = 1;
-        }
-
-        clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-        for (int test_iteration = 0; test_iteration < TEST_COUNT; test_iteration++) {
-
-            // Using random stride size, since assuming we don't know cache line size.
-            int stride = rand() % (size / sizeof(int));
-
-            // Integer access, as directed by project description.
-            int val = *(memory_pointer + stride);
-        }
-        clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-
-        free(memory_pointer);
-
-        const long long unsigned int total_time = BILLION * (end.tv_sec - start.tv_sec)
-                                                  + end.tv_nsec - start.tv_nsec
-                                                  - GET_TIME_OVERHEAD
-                                                  - (FOR_LOOP_OVERHEAD * TEST_COUNT)
-                                                  - (FOR_LOOP_OVERHEAD * RAND_OVERHEAD);
-
-        double average = (total_time / TEST_COUNT);
-        printf("Memory Bytes Size: %i\tAverage Access Latency: %f\n", size, average);
+        printf("%i\t%i\t%f\t%llu\n", size, (int) log2(size), average_time, (total_cycles / TEST_COUNT));
     }
 }
 
@@ -132,8 +76,6 @@ int main(void) {
     }
 
     test_4Bytes_to_500MBytes();
-
-//    test_500MBytes_to_800MBytes();
 
     exit(EXIT_SUCCESS);
 }
