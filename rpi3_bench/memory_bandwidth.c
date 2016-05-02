@@ -54,10 +54,10 @@ void print_rdwr(int pages) {
 
     printf("For %d MB:\n", num_words * sizeof(word) / MEGA);
 
-    for (int i = 0; i < 15; ++i) measure_wrmem(mem, num_words);
+    for (int i = 0; i < 15; ++i) measure_wrmem(mem, num_words);  // warmup runs to population branch prediction buffer, and fault in pages.
     printf("\twrite MB/s: %f\n", measure_wrmem(mem, num_words) * BILLION / MEGA);
 
-    for (int i = 0; i < 15; ++i) measure_rdmem(mem, num_words);
+    for (int i = 0; i < 15; ++i) measure_rdmem(mem, num_words);  // warmup runs to population branch prediction buffer, and fault in pages.
     printf("\tread MB/s:  %f\n", measure_rdmem(mem, num_words) * BILLION / MEGA);
 
     free(mem);
