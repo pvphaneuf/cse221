@@ -46,10 +46,10 @@ void test_4Bytes_to_500MBytes(void) {
         for (int test_iteration = 0; test_iteration < TEST_COUNT; test_iteration++) {
 
             // Using random stride size, since assuming we don't know cache line size.
-            int stride = rand() % (size / sizeof(int));
+            int stride_len = rand() % (size / sizeof(int));
 
             // Integer access, as directed by project description.
-            int touch = *(memory_pointer + stride);
+            int touch = *(memory_pointer + stride_len);
         }
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
