@@ -47,7 +47,7 @@ main(void)
 
     memset(&echo_server_socket, 0, sizeof(echo_server_socket)); // Clear struct
     echo_server_socket.sin_family = AF_INET;                    // Internet/IP
-    char local[] = "127.0.0.1";
+    char local[] = "127.0.0.1";                                 // Change this IP address to host of echo server.
     echo_server_socket.sin_addr.s_addr = inet_addr(local);      // IP address
     echo_server_socket.sin_port = htons(ECHO_SERVER_PORT);      // server echo
 
