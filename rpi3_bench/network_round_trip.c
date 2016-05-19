@@ -28,15 +28,7 @@ print_errno(void) {
 }
 
 
-int
-main(void)
-{
-    if (init_test() != 0) {
-        printf("FAILURE init_test");
-        print_errno();
-        exit(EXIT_FAILURE);
-    }
-
+void tcp_ping(char ip_address[], int array_size) {
     struct timespec start, stop;
 
     int sock;
@@ -47,8 +39,7 @@ main(void)
 
     memset(&echo_server_socket, 0, sizeof(echo_server_socket)); // Clear struct
     echo_server_socket.sin_family = AF_INET;                    // Internet/IP
-    char local[] = "127.0.0.1";                                 // Change this IP address to host of echo server.
-    echo_server_socket.sin_addr.s_addr = inet_addr(local);      // IP address
+    echo_server_socket.sin_addr.s_addr = inet_addr(ip_address); // IP address
     echo_server_socket.sin_port = htons(ECHO_SERVER_PORT);      // server echo
 
     for (unsigned int send_size = 100; send_size <= MAX_PAYLOAD_SIZE; send_size += 100) {
@@ -99,4 +90,19 @@ main(void)
 
         printf("send_size = %u in %f ms\n", send_size, (double)((total_time / 1E6)/ TCP_TEST_COUNT));
     }
+}
+
+
+int
+main(void)
+{
+    if (init_test() != 0) {
+        printf("FAILURE init_test");
+        print_errno();
+        exit(EXIT_FAILURE);
+    }
+
+    char localhost[] = "127.0.0.1";
+
+    tcp_ping(localhost, sizeof(localhost));
 }
