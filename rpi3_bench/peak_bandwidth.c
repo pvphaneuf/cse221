@@ -67,7 +67,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
-    send(sock, &send_data_buffer, send_data_byte_size, 0);
+    send(sock, send_data_buffer, send_data_byte_size, 0);
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
@@ -77,7 +77,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
     const long long unsigned int total_time = 1E9 * (stop.tv_sec - start.tv_sec)
                                               + stop.tv_nsec - start.tv_nsec;
 
-    printf("%s\t%u bytes in %f ns\n", ip_address, send_data_byte_size, (double)total_time);
+    printf("%s\t%u bytes in %llu ns\n", ip_address, send_data_byte_size, total_time);
 }
 
 
