@@ -11,7 +11,7 @@
 #include "common.h"
 
 
-#define DISCARD_SERVICE_PORT 7
+#define DISCARD_SERVICE_PORT 9
 
 // TODO: execute more tests.
 #define TEST_COUNT = 100
@@ -43,16 +43,16 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
     discard_service_socket.sin_port = htons(DISCARD_SERVICE_PORT);
 
     unsigned int send_data_byte_size = 12500000;  // 12500000 bytes = 100 megabits
-    char *send_data_buffer;
+    char* send_data_buffer;
     send_data_buffer = malloc(send_data_byte_size);
     if(send_data_buffer == NULL) {
-        printf("Can't allocate memory\n");
+        printf("Failed allocate memory to send buffer.\n");
         exit(EXIT_FAILURE);
     }
     memset(send_data_buffer, 'b', send_data_byte_size);
 
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-        printf("Failed to CREATE socket");
+        printf("Failed to CREATE socket.");
         print_errno();
         close(sock);
         exit(EXIT_FAILURE);
@@ -77,7 +77,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
     const long long unsigned int total_time = 1E9 * (stop.tv_sec - start.tv_sec)
                                               + stop.tv_nsec - start.tv_nsec;
 
-    printf("send_data_byte_size = %u in %f ms\n", send_data_byte_size, (double)(total_time / 1E6));
+    printf("%u bytes in %f ms\n", send_data_byte_size, (double)(total_time / 1E6));
 }
 
 
@@ -90,5 +90,6 @@ main(void) {
     }
 
     char localhost[] = "127.0.0.1";
-    tcp_peak_bandwidth(localhost, sizeof(localhost));
+    char remote_host[] = "169.254.5.251";
+    tcp_peak_bandwidth(remote_host, sizeof(remote_host));
 }
