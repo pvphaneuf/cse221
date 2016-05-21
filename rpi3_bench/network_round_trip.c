@@ -10,7 +10,8 @@
 
 #include "common.h"
 
-#define ECHO_SERVER_PORT 7
+
+#define ECHO_SERVICE_PORT 7
 
 #define TCP_TEST_COUNT 50
 
@@ -28,7 +29,8 @@ print_errno(void) {
 }
 
 
-void tcp_ping(char ip_address[], int array_size) {
+void
+tcp_ping(char ip_address[], int array_size) {
     struct timespec start, stop;
 
     int sock;
@@ -39,8 +41,8 @@ void tcp_ping(char ip_address[], int array_size) {
 
     memset(&echo_server_socket, 0, sizeof(echo_server_socket)); // Clear struct
     echo_server_socket.sin_family = AF_INET;                    // Internet/IP
-    echo_server_socket.sin_addr.s_addr = inet_addr(ip_address); // IP address
-    echo_server_socket.sin_port = htons(ECHO_SERVER_PORT);      // server echo
+    echo_server_socket.sin_addr.s_addr = inet_addr(ip_address);
+    echo_server_socket.sin_port = htons(ECHO_SERVICE_PORT);
 
     for (unsigned int send_size = 100; send_size <= MAX_PAYLOAD_SIZE; send_size += 100) {
 
