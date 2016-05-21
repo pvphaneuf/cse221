@@ -7,6 +7,8 @@
 #include <arpa/inet.h>      // htons()
 #include <sys/socket.h>
 #include <time.h>   // timespec, clock_gettime()
+#include <stdlib.h>  //qsort()
+#include <limits.h>  //ULLONG_MAX
 
 #include "common.h"
 
@@ -27,9 +29,10 @@ print_errno(void) {
 }
 
 
+
 // This peak bandwidth test will assume that the network being used is a direct
 // ethernet connection to another machine
-void tcp_peak_bandwidth(char ip_address[], int array_size) {
+void tcp_peak_bandwidth(char ip_address[], unsigned int array_size) {
     struct timespec start, stop;
 
     int sock;
@@ -64,7 +67,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
         exit(EXIT_FAILURE);
     }
 
-    long long unsigned int total_time = 0;
+    long long unsigned int min_time = ULLONG_MAX;
 
     for (unsigned int idx = 0; idx < TEST_COUNT; idx++) {
         memset(send_data_buffer, 'b', send_data_byte_size);
@@ -73,13 +76,18 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
         send(sock, send_data_buffer, send_data_byte_size, 0);
         clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
 
-        total_time = total_time + 1E9 * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+        long long unsigned int time = 1E9 * (stop.tv_sec - start.tv_sec)
+                                      + stop.tv_nsec - start.tv_nsec
+                                      - GET_TIME_OVERHEAD;
+
+        if (time < min_time)
+            min_time = time;
     }
 
     close(sock);
     free(send_data_buffer);
 
-    printf("%s\t%u bytes in %f s\n", ip_address, send_data_byte_size, (float)((total_time/1E9)/TEST_COUNT));
+    printf("%s\t%u bytes in %f s\n", ip_address, send_data_byte_size, ((float) min_time / 1E9));
 }
 
 
