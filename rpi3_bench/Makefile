@@ -2,7 +2,8 @@ CODEGEN=-mcpu=cortex-a53 -mfpu=neon -mfloat-abi=hard -mapcs-frame
 CFLAGS=-O0 -std=gnu11 -Wall $(CODEGEN) $(FORMAT_FLAGS)
 EXES=clock_gettime hpet_clock_resolutions procedure_call system_call_overhead \
 	 task_creation for_loop futex_wake futex_wait thread_context_switch \
-         process_context_switch memory_bandwidth page_fault_access file_cache network_round_trip
+         process_context_switch memory_bandwidth page_fault_access file_cache \
+         network_round_trip peak_bandwidth
 COMMON_FLAGS=common.o -lm -lrt -lcpufreq -pthread $(CFLAGS)
 FORMAT_FLAGS=-fdiagnostics-color=auto
 
