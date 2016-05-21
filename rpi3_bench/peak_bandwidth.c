@@ -13,8 +13,7 @@
 
 #define DISCARD_SERVICE_PORT 9
 
-// TODO: execute more tests.
-#define TEST_COUNT = 100
+#define TEST_COUNT 100
 
 
 extern int errno;
@@ -42,6 +41,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
     discard_service_socket.sin_addr.s_addr = inet_addr(ip_address);
     discard_service_socket.sin_port = htons(DISCARD_SERVICE_PORT);
 
+    // have to dynamically allocate buffer since 100 MB larger than program stack.
     unsigned int send_data_byte_size = 12500000;  // 12500000 bytes = 100 megabits
     char* send_data_buffer;
     send_data_buffer = malloc(send_data_byte_size);
@@ -49,7 +49,6 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
         printf("Failed allocate memory to send buffer.\n");
         exit(EXIT_FAILURE);
     }
-    memset(send_data_buffer, 'b', send_data_byte_size);
 
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         printf("Failed to CREATE socket.");
@@ -65,19 +64,22 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
         exit(EXIT_FAILURE);
     }
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    long long unsigned int total_time = 0;
 
-    send(sock, send_data_buffer, send_data_byte_size, 0);
+    for (unsigned int idx = 0; idx < TEST_COUNT; idx++) {
+        memset(send_data_buffer, 'b', send_data_byte_size);
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+        clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+        send(sock, send_data_buffer, send_data_byte_size, 0);
+        clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+
+        total_time = total_time + 1E9 * (stop.tv_sec - start.tv_sec) + stop.tv_nsec - start.tv_nsec;
+    }
 
     close(sock);
     free(send_data_buffer);
 
-    const long long unsigned int total_time = 1E9 * (stop.tv_sec - start.tv_sec)
-                                              + stop.tv_nsec - start.tv_nsec;
-
-    printf("%s\t%u bytes in %llu ns\n", ip_address, send_data_byte_size, total_time);
+    printf("%s\t%u bytes in %f s\n", ip_address, send_data_byte_size, (float)((total_time/1E9)/TEST_COUNT));
 }
 
 
