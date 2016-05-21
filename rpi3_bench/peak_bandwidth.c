@@ -77,7 +77,7 @@ void tcp_peak_bandwidth(char ip_address[], int array_size) {
     const long long unsigned int total_time = 1E9 * (stop.tv_sec - start.tv_sec)
                                               + stop.tv_nsec - start.tv_nsec;
 
-    printf("%u bytes in %f ms\n", send_data_byte_size, (double)(total_time / 1E6));
+    printf("%s\t%u bytes in %f ns\n", ip_address, send_data_byte_size, (double)total_time);
 }
 
 
@@ -90,6 +90,8 @@ main(void) {
     }
 
     char localhost[] = "127.0.0.1";
+    tcp_peak_bandwidth(localhost, sizeof(localhost));
+
     char remote_host[] = "169.254.5.251";
     tcp_peak_bandwidth(remote_host, sizeof(remote_host));
 }
