@@ -15,9 +15,9 @@
 
 #define DISCARD_SERVICE_PORT 9
 
-#define TEST_COUNT 100
+#define TEST_COUNT 1000
 
-# define DEBUG
+//#define DEBUG
 
 
 extern int errno;
@@ -64,25 +64,25 @@ void connect_disconnect(char ip_address[], unsigned int array_size) {
             exit(EXIT_FAILURE);
         }
 #else
-        connect(sock, (struct sockaddr *) &discard_service_socket, sizeof(discard_service_socket);
+        connect(sock, (struct sockaddr *) &discard_service_socket, sizeof(discard_service_socket));
 #endif
         clock_gettime(CLOCK_MONOTONIC_RAW, &connect_stop);
         long long unsigned int connect_time = 1E9 * (connect_stop.tv_sec - connect_start.tv_sec)
                        + connect_stop.tv_nsec - connect_start.tv_nsec
-                       - GET_TIME_OVERHEAD;
+                       - GET_TIME_OVERHEAD - SYSCALL_OVERHEAD;
         connect_time_total += connect_time;
 
-        usleep(1000);
+        usleep(1E5);
 
         clock_gettime(CLOCK_MONOTONIC_RAW, &close_start);
         close(sock);
         clock_gettime(CLOCK_MONOTONIC_RAW, &close_stop);
         long long unsigned int close_time = 1E9 * (close_stop.tv_sec - close_start.tv_sec)
                      + close_stop.tv_nsec - close_start.tv_nsec
-                     - GET_TIME_OVERHEAD;
+                     - GET_TIME_OVERHEAD - SYSCALL_OVERHEAD;
         close_time_total += close_time;
 
-        printf("connect %f ms\tclose %f ms\n", (double)(connect_time / 1E6), (double)(close_time/ 1E6));
+//        printf("connect %f ms\tclose %f ms\n", (double)(connect_time / 1E6), (double)(close_time/ 1E6));
     }
 
     double connect_time_avg = (double)(connect_time_total / (TEST_COUNT * 1E6));
@@ -104,5 +104,5 @@ main(void) {
     connect_disconnect(localhost, sizeof(localhost));
 
     char remote_host[] = "169.254.5.251";
-    tcp_peak_bandwidth(remote_host, sizeof(remote_host));
+    connect_disconnect(remote_host, sizeof(remote_host));
 }
