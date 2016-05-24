@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>         // close()
 #include <errno.h>
@@ -7,7 +6,7 @@
 #include <arpa/inet.h>      // htons()
 #include <sys/socket.h>
 #include <time.h>   // timespec, clock_gettime()
-#include <stdlib.h>  //qsort()
+#include <stdlib.h>  //EXIT_FAILURE
 #include <limits.h>  //ULLONG_MAX
 
 #include "common.h"
