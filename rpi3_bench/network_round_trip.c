@@ -7,6 +7,7 @@
 #include <arpa/inet.h>      // htons()
 #include <sys/socket.h>
 #include <time.h>   // timespec, clock_gettime()
+#include <unistd.h>         // usleep()
 
 #include "common.h"
 
@@ -81,6 +82,8 @@ tcp_ping(char ip_address[], int array_size) {
             }
 
             close(sock);
+
+//            usleep(1E5);
         }
 
         clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
@@ -90,7 +93,7 @@ tcp_ping(char ip_address[], int array_size) {
                                                   - GET_TIME_OVERHEAD
                                                   - (FOR_LOOP_OVERHEAD * TCP_TEST_COUNT);
 
-        printf("send_size = %u in %f ms\n", send_size, (double)((total_time / 1E6)/ TCP_TEST_COUNT));
+        printf("%s\tsend_size = %u in %f ms\n", ip_address, send_size, (double)((total_time / 1E6)/ TCP_TEST_COUNT));
     }
 }
 
@@ -105,6 +108,8 @@ main(void)
     }
 
     char localhost[] = "127.0.0.1";
-
     tcp_ping(localhost, sizeof(localhost));
+
+    char remote_host[] = "169.254.5.251";
+    tcp_ping(remote_host, sizeof(remote_host));
 }

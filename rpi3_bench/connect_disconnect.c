@@ -1,4 +1,4 @@
-#include <unistd.h>         // sleep()
+#include <unistd.h>         // usleep()
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>         // close()
