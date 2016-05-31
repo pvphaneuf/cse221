@@ -17,6 +17,10 @@
 
 #define MAX_PAYLOAD_SIZE 1000
 
+#define START_PAYLOAD_SIZE 100
+
+#define PAYLOAD_ITERATION 100
+
 
 extern int errno;
 
@@ -30,12 +34,33 @@ print_errno(void) {
 
 
 void
+warm_up(int sock) {
+    unsigned int send_size = START_PAYLOAD_SIZE;
+    char send_data_buffer[send_size];
+    for (int k = 0; k < send_size; k++) send_data_buffer[k] = 'b';  // stuffs output data buffer full of b's.
+
+    unsigned int receive_size = send_size;
+    char receive_data_buffer[receive_size];
+
+    int total_bytes_received = 0;
+    int bytes_received = 0;
+
+    send(sock, &send_data_buffer, START_PAYLOAD_SIZE, 0);
+
+    while (total_bytes_received < receive_size) {
+        bytes_received = recv(sock, &receive_data_buffer, receive_size, 0);
+        total_bytes_received += bytes_received;
+    }
+}
+
+
+void
 tcp_ping(char ip_address[], int array_size) {
     struct timespec send_start, send_stop;
 
     int sock;
     unsigned int receive_size;
-    int received = 0;
+    int total_bytes_received = 0;
 
     struct sockaddr_in echo_server_socket;
 
@@ -58,7 +83,9 @@ tcp_ping(char ip_address[], int array_size) {
         exit(EXIT_FAILURE);
     }
 
-    for (unsigned int send_size = 100; send_size <= MAX_PAYLOAD_SIZE; send_size += 100) {
+    warm_up(sock);
+
+    for (unsigned int send_size = START_PAYLOAD_SIZE; send_size <= MAX_PAYLOAD_SIZE; send_size += PAYLOAD_ITERATION) {
 
         char send_data_buffer[send_size];
         for (int k = 0; k < send_size; k++) send_data_buffer[k] = 'b';  // stuffs output data buffer full of b's.
@@ -71,15 +98,15 @@ tcp_ping(char ip_address[], int array_size) {
 
         for (unsigned int test_idx = 0; test_idx < TCP_TEST_COUNT; test_idx += 1) {
 
-            received = 0;
+            total_bytes_received = 0;
 
             clock_gettime(CLOCK_MONOTONIC_RAW, &send_start);
 
             send(sock, &send_data_buffer, send_size, 0);
 
-            while (received < receive_size) {
+            while (total_bytes_received < receive_size) {
                 bytes_received = recv(sock, &receive_data_buffer, receive_size, 0);
-                received += bytes_received;
+                total_bytes_received += bytes_received;
             }
 
             clock_gettime(CLOCK_MONOTONIC_RAW, &send_stop);
