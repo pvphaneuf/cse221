@@ -21,10 +21,10 @@
 #define MIN_FS_BITS MAX_FS_BITS-10
 
 // WARNING: These functions specifically are optimized! 
-//double measure_fr_access(int, int, bool) __attribute__((optimize("Ofast")));
+//double measure_fc_access(int, int, bool) __attribute__((optimize("Ofast")));
 
 
-double measure_fr_access(int fd, int num_blocks, bool is_random_access) {
+double measure_fc_access(int fd, int num_blocks, bool is_random_access) {
     struct timespec start, end;
     char* buf = NULL;
     int indices[num_blocks];
@@ -85,7 +85,7 @@ void print_for(int num_bytes, bool is_random_access) {
     assert(fd != -1 && "open() failed.");
 
     // Measure the time loading it.
-    double read_time = measure_fr_access(fd, num_blocks, is_random_access);
+    double read_time = measure_fc_access(fd, num_blocks, is_random_access);
 
     printf("%d MB: %.2f us/block\n",
            num_blocks * BLOCK_SIZE / 1024 / 1024,
