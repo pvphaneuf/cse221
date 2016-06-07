@@ -71,17 +71,17 @@ void write_to_disk(const char *filename, int num_blocks) {
     assert(system(buf) == 0);
 }
 
-void print_for(int num_bytes, bool is_random_access) {
+void print_for(int num_bytes, bool is_random_access, const char *filename) {
     int num_blocks = num_bytes / BLOCK_SIZE;
 
     // First, write a file to disk (we're measuring block from disk time).
-    write_to_disk("test.file", num_blocks);
+    write_to_disk(filename, num_blocks);
 
     // Flush caches. We shouldn't be using them, but this enforces it.
     assert(system("sync; echo 1 >|/proc/sys/vm/drop_caches") == 0);
 
     // Open the test file.
-    int fd = open("test.file", O_SYNC | O_DIRECT | O_RDONLY);
+    int fd = open(filename, O_SYNC | O_DIRECT | O_RDONLY);
     assert(fd != -1 && "open() failed.");
 
     // Measure the time loading it.
@@ -95,22 +95,24 @@ void print_for(int num_bytes, bool is_random_access) {
     close(fd);
 
     // Delete the file.
-    unlink("test.file");
+    unlink(filename);
 }
 
 int main(int argc, char **argv) {
     assert(init_test() == 0 && "Could not initialize.");
 
-    puts("Random:");
+    assert(argc == 2 && "usage: file_read.out target_file");
+
+    // printf("Random on file %s:\n", argv[1]);
+
+    // for (size_t fs_bits = MIN_FS_BITS; fs_bits < MAX_FS_BITS; ++fs_bits) {
+    //     print_for(1<<fs_bits, true, argv[1]);
+    // }
+
+    printf("\nSequential on file %s:\n", argv[1]);
 
     for (size_t fs_bits = MIN_FS_BITS; fs_bits < MAX_FS_BITS; ++fs_bits) {
-        print_for(1<<fs_bits, true);
-    }
-
-    puts("\nSequential:");
-
-    for (size_t fs_bits = MIN_FS_BITS; fs_bits < MAX_FS_BITS; ++fs_bits) {
-        print_for(1<<fs_bits, false);
+        print_for(1<<fs_bits, false, argv[1]);
     }
 
     return 0;
