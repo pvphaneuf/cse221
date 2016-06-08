@@ -79,6 +79,8 @@ void tcp_peak_bandwidth(char ip_address[], unsigned int array_size) {
                                       + stop.tv_nsec - start.tv_nsec
                                       - GET_TIME_OVERHEAD;
 
+//        printf("%f\n", (time/1E9));
+
         if (time < min_time)
             min_time = time;
     }
