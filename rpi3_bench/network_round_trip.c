@@ -116,6 +116,8 @@ tcp_ping(char ip_address[], int array_size) {
                                                      - GET_TIME_OVERHEAD
                                                      - SYSCALL_OVERHEAD * 2;  // for send and receive
 
+//            printf("%llu\n", round_trip_time);
+
             total_time += round_trip_time;
         }
 
