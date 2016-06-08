@@ -7,7 +7,7 @@
 #include "common.h"
 
 
-const unsigned int AVG_TEST_COUNT = 10000;
+const unsigned int AVG_TEST_COUNT = 1000000;
 
 const unsigned int SUBSEQUENT_CALLS_TEST_COUNT = 10;
 
