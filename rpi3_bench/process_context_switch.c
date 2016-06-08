@@ -29,7 +29,11 @@
 
 
 unsigned int get_total_context_switches() {
-    return PER_PROCESS_TEST_COUNT * PROCESS_COUNT * PER_PROCESS_PER_ITERATION_CONTEXT_SWITCH_COUNT;
+//    return PER_THREAD_TEST_COUNT * THREAD_COUNT * PER_THREAD_PER_ITERATION_CONTEXT_SWITCH_COUNT;
+
+    // According to external measurements, this is a more accurate representation of the amount of occurring context switches.
+    // Using this value will returning more accurate results for the average.
+    return 600000;
 }
 
 
