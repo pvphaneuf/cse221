@@ -5,7 +5,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h> // ceil()
+#include <math.h> // ceil(), sqrt()
 
 #include "common.h"
 
@@ -23,6 +23,7 @@ const double NSEC_PER_CYCLE = 0.833;  // nanoseconds
 
 const double RAND_OVERHEAD = 74.0;  // nanoseconds
 
+#define range(idx, size) for(unsigned int (idx) = 0; (idx) < size; ++(idx))
 
 int init_test() {
     // set the core-affinity
@@ -85,6 +86,24 @@ double get_median(double result_array[], unsigned int array_size) {
 
     return median;
 }
+
+
+double get_stddev(double result_array[], unsigned int array_size) {
+    double E_X = 0;
+    double var = 0; // Variance
+
+    range(i, array_size) {
+        E_X += result_array[i] / (double)array_size;
+    }
+
+    range(i, array_size) {
+        double dev = result_array[i] - E_X;
+        var += dev * dev;
+    }
+
+    return sqrt(var);
+}
+
 
 double timespec_diff_to_nsecs(struct timespec start, struct timespec end) {
     return (double)(end.tv_sec - start.tv_sec) * BILLION + \
