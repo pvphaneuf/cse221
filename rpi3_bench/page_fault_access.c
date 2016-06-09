@@ -44,7 +44,7 @@ void write_to_disk(const char *filename, int num_pages) {
 }
 
 void print_pages(int num_pages) {
-    double cold_time, hot_time;
+    double cold_time, hot_time[30], avg, std;
 
     // First, write a file to disk (we're measuring page from disk time).
     write_to_disk("test.file", num_pages);
@@ -62,9 +62,13 @@ void print_pages(int num_pages) {
     for(int i = 0; i < 15; ++i) measure_pf_access(mem, num_pages);
 
     // Measure the time loading it hot.
-    hot_time = measure_pf_access(mem, num_pages);
+    for (int i = 0; i < 30; ++i) {
+        hot_time[i] = measure_pf_access(mem, num_pages);
+    }
+    avg = get_mean(hot_time, 30);
+    std = get_mean(hot_time, 30);
 
-    printf("%d pages: page fault timing: %fK cycles/page\n", num_pages, (cold_time-hot_time) / 0.833 / 1000);
+    printf("%d pages: page fault timing: %fK cycles/page, std %f\n", num_pages, (cold_time-avg) / 0.833 / 1000, std / 0.833 / 0.833 / 1000 / 1000);
 
     // Close the file.
     assert(munmap(mem, PAGE_SIZE * num_pages) == 0 && "munmap failed.");

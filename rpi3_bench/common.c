@@ -74,6 +74,17 @@ void print_results(double result_array[], unsigned int array_size) {
 }
 
 
+double get_mean(double result_array[], unsigned int array_size) {
+    double E_X = 0;
+
+    range(i, array_size) {
+        E_X += result_array[i] / (double)array_size;
+    }
+
+    return E_X;
+}
+
+
 // Will sort array before finding median.
 double get_median(double result_array[], unsigned int array_size) {
     qsort(result_array, array_size, sizeof(int), compare_function);
