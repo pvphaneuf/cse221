@@ -17,7 +17,11 @@ int init_test();
 
 int compare_function(const void *a, const void *b);
 
+double get_mean(double result_array[], unsigned int array_size);
+
 double get_median(double result_array[], unsigned int array_size);
+
+double get_stddev(double result_array[], unsigned int array_size);
 
 void print_results(double result_array[], unsigned int array_size);
 

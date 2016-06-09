@@ -56,24 +56,29 @@ double measure_vprocess_creation(int num_processes) {
     return (timespec_diff_to_nsecs(start, end) / num_processes) - FOR_LOOP_OVERHEAD - GET_TIME_OVERHEAD;
 }
 
-double median_30_times(double (*measure)(int), int num_threads) {
+void measure_30_times(double (*measure)(int), int num_threads, const char *name) {
     double measure_array[MEASUREMENTS];
 
     for (int m = 0; m < MEASUREMENTS; ++m) {
         measure_array[m] = measure(NUM_THREADS);
     }
 
-    return get_median(measure_array, MEASUREMENTS);
+    printf("%s (%d): std_dev = %f, median = %f\n",
+           name,
+           num_threads,
+           get_stddev(measure_array, MEASUREMENTS),
+           get_median(measure_array, MEASUREMENTS));
+
 }
 
 #define print_threads(num_threads)\
-    printf("median for %d threads is %f\n", (num_threads), median_30_times(measure_thread_creation, num_threads))
+    measure_30_times(measure_thread_creation, num_threads, "threads")
 
 #define print_processes(num_processes)\
-    printf("median for %d processes (fork) is %f ms\n", (num_processes), median_30_times(measure_process_creation, num_processes))
+    measure_30_times(measure_process_creation, num_processes, "processes (fork)")
 
 #define print_vprocesses(num_processes)\
-    printf("median for %d processes (vfork) is %f ms\n", (num_processes), median_30_times(measure_vprocess_creation, num_processes))
+    measure_30_times(measure_vprocess_creation, num_processes, "processes (vfork)")
 
 int main() {
     assert(init_test() == 0 && "Could not initialize.");
